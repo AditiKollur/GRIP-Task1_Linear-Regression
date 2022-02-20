@@ -1,0 +1,63 @@
+#Importing required libraries
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+#Read data from a remote link and Load the data in to notebook
+data="http://bit.ly/w-data"
+students=pd.read_csv(data)
+students.head(6)
+
+#Checking dimensions of data
+students.shape
+
+#Checking the Distribution of scores by plotting observations in a scatter plot
+sns.scatterplot(students['Hours'],students['Scores'])
+plt.title('Hours vs Percentage')
+plt.ylabel("Percentage of student score")
+plt.xlabel("Hours student has studied")
+plt.show()
+
+#Input and output columns
+X = students.iloc[:, :-1].values .reshape(25,1)
+y = students.iloc[:, 1].values  
+
+from sklearn.model_selection import train_test_split  
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0) 
+
+from sklearn.linear_model import LinearRegression  
+regressor = LinearRegression()  
+regressor.fit(X_train, y_train) 
+print("Training complete.")
+
+# Plotting the regression line
+line = regressor.coef_*X+regressor.intercept_
+# Plotting for the test data
+plt.scatter(X, y)
+plt.plot(X, line);
+plt.show()
+
+print(X_test) # Testing data - In Hours
+y_pred = regressor.predict(X_test) # Predicting the scores
+
+# Comparing Actual vs Predicted
+df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})  
+df 
+
+from pandas.core.dtypes.cast import soft_convert_objects
+# Predict PERCENTAGE OF SCORE WHEN HOURS IS 9.25 hrs/day
+
+h= 9.25
+score= regressor.predict([[h]])
+print("No of Hours = {}".format(h))
+print("Predicted Score = {}".format(score[0]))
+
+from sklearn.metrics import r2_score,mean_absolute_error
+
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred),"\n\n") 
+print("R square value:",r2_score(y_test,y_pred),"\n\n")
+
+
